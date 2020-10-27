@@ -11,7 +11,7 @@ app.use(express.json());
 // });
 
 const tours = JSON.parse(
-  fs.readFileSync(`${__dirname}/dev-data/data/tours.json`)
+  fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
 
 app.get('/api/v1/tours', (req, res) => {
@@ -20,6 +20,30 @@ app.get('/api/v1/tours', (req, res) => {
     results: tours.length,
     data: {
       tours,
+    },
+  });
+});
+
+// get by param-id
+
+app.get('/api/v1/tours/:id', (req, res) => {
+  console.log(req.params);
+  const id = req.params.id * 1; //converts string to number- we can also use parse int
+
+  // send 404 if the id > length of tours
+
+  if (id > tours.length) {
+    return res.status(404).json({
+      status: 'Fail',
+      message: 'Invalid ID',
+    });
+  }
+
+  const tour = tours.find((e) => e.id === id);
+  res.status(200).json({
+    status: 'success',
+    data: {
+      tour,
     },
   });
 });
@@ -40,7 +64,7 @@ app.post('/api/v1/tours', (req, res) => {
   // write to tours- before we were only reading- this will be a js object- convert it to json (Overrides)
 
   fs.writeFile(
-    `${__dirname}/dev-data/data/tours.json`,
+    `${__dirname}/dev-data/data/tours-simple.json`,
     JSON.stringify(tours),
     (err) => {
       res.status(201).json({
@@ -53,6 +77,22 @@ app.post('/api/v1/tours', (req, res) => {
   );
 });
 
+// update and delete are same- just change the status code and method.
+
+// app.patch('/api/vi/tours/:id', (req, res)=>{
+//    if (req.params.id*1 > tours.length) {
+//    return res.status(404).json({
+//     status: 'Fail',
+//        message: 'Invalid ID',
+//      });
+//    }
+//    res.status(200).json({
+//      status: 'Success',
+//      data: {
+//        tour: "<Upadeyd>"
+//      },
+//  })
+
 app.listen(3000, () => {
-  console.log('APp running on port 3000');
+  console.log('App started on port 3000');
 });
