@@ -6,6 +6,8 @@ const app = express();
 
 // Middlewares
 
+app.use(morgan('dev'));
+
 app.use(express.json());
 
 // custom middleware-
@@ -24,7 +26,7 @@ const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
 
-// handelers
+// Route handelers
 
 const getAllTours = (req, res) => {
   res.status(200).json({
@@ -58,6 +60,7 @@ const getTour = (req, res) => {
   });
 };
 
+// create tour
 const createTour = (req, res) => {
   //console.log(req);
   // console.log(req.body);
@@ -87,14 +90,51 @@ const createTour = (req, res) => {
   );
 };
 
+// get users
+
+const getAllUsers = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'This route has not yet implimented',
+  });
+};
+
+const createUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'This route has not yet implimented',
+  });
+};
+
+const getUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'This route has not yet implimented',
+  });
+};
+
+const updateUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'This route has not yet implimented',
+  });
+};
+
+const deleteUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'This route has not yet implimented',
+  });
+};
+
 // Routes
-app.get('/api/v1/tours', getAllTours);
+//app.get('/api/v1/tours', getAllTours);
 
 // get by param-id -get one tour
-app.get('/api/v1/tours/:id', getTour);
+//app.get('/api/v1/tours/:id', getTour);
 
 // create new tour
-app.post('/api/v1/tours', createTour);
+//app.post('/api/v1/tours', createTour);
 
 // update and delete are same- just change the status code and method.
 
@@ -111,6 +151,13 @@ app.post('/api/v1/tours', createTour);
 //        tour: "<Upadeyd>"
 //      },
 //  })
+
+// chaining routes- clean code
+
+app.route('/api/v1/tours').get(getAllTours).post(createTour);
+app.route('/api/v1/tours/:id').get(getTour);
+app.route('/api/v1/users').get(getAllUsers).post(createUser);
+app.route('/api/v1/user/:id').get(getUser).patch(updateUser).delete(deleteUser);
 
 // Start server
 app.listen(3000, () => {
