@@ -1,9 +1,19 @@
 const express = require('express');
 const fs = require('fs');
+const morgan = require('morgan');
 
 const app = express();
 
+// Middlewares
+
 app.use(express.json());
+
+// custom middleware-
+//- this will run everytime- make sure to pass next()
+app.use((req, res, next) => {
+  console.log('Hello from MW');
+  next();
+});
 
 // app.get('/', (req, res) => {
 //   res.status(200).json({ message: 'hello', app: 'test' });
@@ -14,7 +24,9 @@ const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
 
-app.get('/api/v1/tours', (req, res) => {
+// handelers
+
+const getAllTours = (req, res) => {
   res.status(200).json({
     status: 'success',
     results: tours.length,
@@ -22,11 +34,9 @@ app.get('/api/v1/tours', (req, res) => {
       tours,
     },
   });
-});
+};
 
-// get by param-id
-
-app.get('/api/v1/tours/:id', (req, res) => {
+const getTour = (req, res) => {
   console.log(req.params);
   const id = req.params.id * 1; //converts string to number- we can also use parse int
 
@@ -46,9 +56,9 @@ app.get('/api/v1/tours/:id', (req, res) => {
       tour,
     },
   });
-});
+};
 
-app.post('/api/v1/tours', (req, res) => {
+const createTour = (req, res) => {
   //console.log(req);
   // console.log(req.body);
   // figure out the id for new obj, ususlly this is taken care of database.
@@ -75,7 +85,16 @@ app.post('/api/v1/tours', (req, res) => {
       });
     }
   );
-});
+};
+
+// Routes
+app.get('/api/v1/tours', getAllTours);
+
+// get by param-id -get one tour
+app.get('/api/v1/tours/:id', getTour);
+
+// create new tour
+app.post('/api/v1/tours', createTour);
 
 // update and delete are same- just change the status code and method.
 
@@ -93,6 +112,7 @@ app.post('/api/v1/tours', (req, res) => {
 //      },
 //  })
 
+// Start server
 app.listen(3000, () => {
   console.log('App started on port 3000');
 });
